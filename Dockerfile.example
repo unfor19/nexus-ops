@@ -1,0 +1,12 @@
+ARG ALPINECI_TAG="latest"
+FROM unfor19/alpine-ci:${ALPINECI_TAG} as base
+
+# Do your "build" stuff ...
+WORKDIR /code/
+RUN curl -s https://catfact.ninja/fact | jq -r .fact > fact.txt
+
+# Use Docker multi-stage
+FROM ubuntu:20.04 as app
+WORKDIR /app/
+COPY --from=base /code/* /app/
+CMD find -type f -name *.txt -exec cat {} \;
