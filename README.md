@@ -149,7 +149,7 @@ After changing the order of Members -
 
 ## Known Caveats
 
-- It is required to pull all relevant images **before** the build step. Retagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps avoiding hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
+- It is required to pull all relevant images **before** the build step. Retagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps to avoid hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
 
 ## Authors
 
