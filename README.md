@@ -63,7 +63,7 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
 1. (Optional) Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create [AWS ECR Public](https://gallery.ecr.aws/) repository
    - Recipe Type: **docker (proxy)**
    - Name: `docker-ecr`
-   - Remote storage URL (DockerHub): `https://public.ecr.aws`
+   - Remote storage URL (ECR): `https://public.ecr.aws`
      - [Docker login to AWS ECR](https://docs.aws.amazon.com/AmazonECR/latest/public/public-registries.html):
        ```
        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
