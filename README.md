@@ -12,7 +12,7 @@ Nexus's Repository will serve as a "cache server", here's the logic -
 2. If the image exists, then pull it from there and re-tag it.
 3. If the image doesn't exist, pull it from DockerHub and save it in Nexus's Repository, so the next pull won't hit DockerHub.
 
-### Set Nexus's Repository As A Trusted Docker Repository. 
+### Set Nexus's Repository As A Trusted Docker Repository
 
 Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then restart the Docker Daemon.
 
@@ -77,6 +77,7 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
    - HTTP: `8082` - Images are pulled from `http://localhost:8082`
    - Allow Anonymous docker pull: **check**
    - Member repositories > Members > Add `docker-hub`
+   - Member repositories > Members > Add `docker-ecr`
 
 3. [Realms](http://localhost:8081/#admin/security/realms) > **Add Docker Bearer Token Realm** - [Enables Anonymous Pulls](https://help.sonatype.com/repomanager3/system-configuration/user-authentication#UserAuthentication-security-realms)
 
