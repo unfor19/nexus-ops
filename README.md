@@ -53,25 +53,25 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
 
 ### Setup Docker Repository With Nexus
 
-Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create repository
+1. Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create repository
 
-Recipe Type: **docker (proxy)**
-Name: `docker-hub`
-Remote storage URL: `https://registry-1.docker.io`
-Docker Index: **Use Docker Hub**
+   - Recipe Type: **docker (proxy)**
+   - Name: `docker-hub`
+   - Remote storage URL: `https://registry-1.docker.io`
+   - Docker Index: **Use Docker Hub**
 
-Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create repository
+1. Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create repository
 
-Recipe Type: **docker (group)**
-Name: `docker-group`
-HTTP: `8082`
-Allow Anonymous docker pull: **check**
-Member repositories > Members > Add `docker-hub`
+   - Recipe Type: **docker (group)**
+   - Name: `docker-group`
+   - HTTP: `8082`
+   - Allow Anonymous docker pull: **check**
+   - Member repositories > Members > Add `docker-hub`
 
-[Realms](http://localhost:8081/#admin/security/realms) > Add Docker Bearer Token Realm
+1. [Realms](http://localhost:8081/#admin/security/realms) > Add Docker Bearer Token Realm
 
 
-The CI/CD pipeline should be as follows
+### Workflow
 
 1. Pull relevant Docker images via `localhost:8082`
    ```bash
