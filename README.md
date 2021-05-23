@@ -26,7 +26,7 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
 
 ### Run Nexus Locally
 
-For the sake of simplicity, I won't be using a Docker volumes.
+For the sake of simplicity, I **won't be using** a Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data)
 
 1. Run Nexus locally
     ```bash
