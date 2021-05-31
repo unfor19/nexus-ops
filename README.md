@@ -22,7 +22,7 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
   ],
 ```
 
-![](nexus-ops-insecure-registries.png)
+![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
 
 ### Run Nexus Locally
 
@@ -68,7 +68,7 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
        ```
        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
        ```
-   - Docker Index: **Use proxy registry**   
+   - Docker Index: **Use proxy registry**
 
 2. Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create repository
 
@@ -131,12 +131,12 @@ Navigate to [http://localhost:8081/service/rest/repository/browse/**docker-hub**
 
 To change this behavior, go to the [docker-group](http://localhost:8081/#admin/repository/repositories:docker-group)'s settings and change the order of **Members**
 
-![nexus-ops-order-of-members](image_link)
+![nexus-ops-order-of-members.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-order-of-members.png)
 
 After changing the order of Members -
 1. [Invalidate cache](http://localhost:8081/#admin/repository/repositories:docker-group)
 
-   ![nexus-ops-invalidate-cache.png](image_link)
+   ![nexus-ops-invalidate-cache.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-invalidate-cache.png)
 2. Remove the existing image from local Docker Daemon cache
    ```bash
    docker rmi localhost:8082/bitnami/kubectl
