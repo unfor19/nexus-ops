@@ -138,15 +138,7 @@ As implied from the label **self-hosted**, I intend to run this workflow on my l
    2021-06-01 21:18:04Z: Listening for Jobs   
    ```
 
-Before we go on and initiate a workflow, let's make sure we're hitting the local Nexus repository by inspecting the [Metrics](http://localhost:8081/#admin/support/metrics) page.
-
-1. Navigate to Nexus admin page - http://localhost:8081/#admin/repository
-2. Server Administration (Cogwheel) > Support > [Metrics](http://localhost:8081/#admin/support/metrics)
-3. Take a screenshot or write down the numbers of `Web Response Codes` and `Web Requests`, we'll check them again later.
-
-![nexus-ops-metrics-before.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-metrics-before.png)
-
-Add some file, commit and push
+Go on and initiate a workflow; add some file, commit and push
 ```
 touch some-file                   && \
 git add some-file                 && \
@@ -154,7 +146,6 @@ git commit -m "added some file"   && \
 git push
 ```
 
-![nexus-ops-metrics-after.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-metrics-after.png)
 
 ### Pull From Different Repositories
 
