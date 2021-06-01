@@ -26,7 +26,7 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
 
 ### Run Nexus Locally
 
-For the sake of simplicity, I **won't be using** a Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data)
+For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The images are saved in the top layer of Nexus's container, so if the container is removed (not stopped) then the Docker images will also be removed.
 
 1. Run Nexus locally
     ```bash
@@ -81,8 +81,7 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
 
 3. [Realms](http://localhost:8081/#admin/security/realms) > **Add Docker Bearer Token Realm** - [Enables Anonymous Pulls](https://help.sonatype.com/repomanager3/system-configuration/user-authentication#UserAuthentication-security-realms)
 
-
-### Workflow
+### Test Locally
 
 1. Pull relevant Docker images via `localhost:8082`
    ```bash
@@ -98,10 +97,64 @@ For the sake of simplicity, I **won't be using** a Docker volumes for [Persisten
    ```bash
    docker build -f Dockerfile.example -t unfor19/nexus-ops:example .
    ```
-5. `docker push` - publish application to DockerHub
+4. `test image`
    ```bash
-   docker push unfor19/nexus-ops:example
+   docker run --rm unfor19/nexus-ops:example
+   # Miacis, the primitive ancestor of cats, was a small, tree-living creature of the late Eocene period, some 45 to 50 million years ago.
+
+   # ^^ A random cat fact for each build
    ```
+
+### Workflow (CI/CD)
+
+I've added the [GitHub Action](https://github.com/features/actions) - [docker-release.yml](https://github.com/unfor19/nexus-ops/blob/master/.github/workflows/docker-latest.yml). If you check it out, you'll see the following [code snippet](https://github.com/unfor19/nexus-ops/blob/master/.github/workflows/docker-latest.yml#L15-L18)
+
+```yaml
+jobs:
+  docker:
+    name: docker
+    runs-on: linux-self-hosted # <-- A label that I chose
+```
+
+As implied from the label **self-hosted**, I intend to run this workflow on my local machine. Adding your local machine as a self-hosted rather is quite simple.
+
+1. GitHub Repository > Settings > Actions > Runners
+2. Add Runner > Operating System: **Linux** (for windows containers), Architecture: **X64**
+3. Follow the steps in **Download**
+4. Follow the steps in **Configure** > Follow the prompts and add a custom label when prompted
+   ```bash
+   Enter any additional labels (ex. label-1,label-2): linux-self-hosted
+   ```
+   A successful configuration should look like this
+   ```
+   ~/actions-runner $ ./config.sh --url https://github.com/unfor19/nexus-ops --token YOUR_TOKEN
+   ...
+   √ Settings Saved.
+   
+   ~/actions-runner $ ./run.sh
+
+   √ Connected to GitHub
+
+   2021-06-01 21:18:04Z: Listening for Jobs   
+   ```
+
+Before we go on and initiate a workflow, let's make sure we're hitting the local Nexus repository by inspecting the [Metrics](http://localhost:8081/#admin/support/metrics) page.
+
+1. Navigate to Nexus admin page - http://localhost:8081/#admin/repository
+2. Server Administration (Cogwheel) > Support > [Metrics](http://localhost:8081/#admin/support/metrics)
+3. Take a screenshot or write down the numbers of `Web Response Codes` and `Web Requests`, we'll check them again later.
+
+![nexus-ops-metrics-before.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-metrics-before.png)
+
+Add some file, commit and push
+```
+touch some-file                   && \
+git add some-file                 && \
+git commit -m "added some file"   && \
+git push
+```
+
+![nexus-ops-metrics-after.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-metrics-after.png)
 
 ### Pull From Different Repositories
 
