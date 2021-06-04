@@ -13,7 +13,7 @@ env:
   DOCKER_BUILDKIT: 1
 
 jobs:
-  docker:
+  example:
     name: docker
     runs-on: linux-self-hosted
     strategy:
@@ -45,3 +45,24 @@ jobs:
       #   run: |
       #     echo '${{ secrets.DOCKER_PASSWORD }}' | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
       #     docker push "${{ matrix.DOCKERHUB_FULL_TAG }}"
+  app:
+    # Assumes that nexus is running locally
+    name: docker
+    runs-on: linux-self-hosted
+    strategy:
+      matrix:
+        include:
+          - DOCKERHUB_FULL_TAG: "unfor19/nexus-ops"
+            DOCKERFILE_PATH: Dockerfile
+    steps:
+      - uses: actions/checkout@v2
+      - name: build image
+        run: |
+          docker build . -t "${{ matrix.DOCKERHUB_FULL_TAG }}" \
+            -f "${{ matrix.DOCKERFILE_PATH }}" \
+            --target "${TARGET_APP}" \
+            --build-arg BUILDKIT_INLINE_CACHE=1
+      - name: push to dockerhub
+        run: |
+          # echo '${{ secrets.DOCKER_PASSWORD }}' | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push "${{ matrix.DOCKERHUB_FULL_TAG }}"

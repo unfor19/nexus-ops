@@ -1,0 +1,23 @@
+{
+    "name": "docker-group",
+    "url": "http://localhost:8081/repository/docker-group",
+    "online": true,
+    "storage": {
+        "blobStoreName": "default",
+        "strictContentTypeValidation": false
+    },
+    "group": {
+        "memberNames": [
+            "docker-hub",
+            "docker-ecrpublic"
+        ]
+    },
+    "docker": {
+        "v1Enabled": false,
+        "forceBasicAuth": false,
+        "httpPort": 8082,
+        "httpsPort": null
+    },
+    "format": "docker",
+    "type": "group"
+}

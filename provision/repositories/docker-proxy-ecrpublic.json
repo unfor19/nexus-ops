@@ -1,0 +1,46 @@
+{
+    "name": "docker-ecrpublic",
+    "url": "http://localhost:8081/repository/docker-ecr",
+    "online": true,
+    "storage": {
+        "blobStoreName": "default",
+        "strictContentTypeValidation": true,
+        "writePolicy": "ALLOW"
+    },
+    "cleanup": null,
+    "docker": {
+        "v1Enabled": true,
+        "forceBasicAuth": false,
+        "httpPort": null,
+        "httpsPort": null
+    },
+    "dockerProxy": {
+        "indexType": "REGISTRY",
+        "indexUrl": null
+    },
+    "proxy": {
+        "remoteUrl": "https://public.ecr.aws",
+        "contentMaxAge": 1440,
+        "metadataMaxAge": 1440
+    },
+    "negativeCache": {
+        "enabled": true,
+        "timeToLive": 1440
+    },
+    "httpClient": {
+        "blocked": false,
+        "autoBlock": true,
+        "connection": {
+            "retries": null,
+            "userAgentSuffix": null,
+            "timeout": null,
+            "enableCircularRedirects": false,
+            "enableCookies": false,
+            "useTrustStore": false
+        },
+        "authentication": null
+    },
+    "routingRuleName": null,
+    "format": "docker",
+    "type": "proxy"
+}

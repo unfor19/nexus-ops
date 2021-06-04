@@ -24,7 +24,35 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
 
 ![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
 
-### Run Nexus Locally
+### Run Nexus Locally (CI)
+
+We will run the a "modified" version of [sonatype/nexus3](https://hub.docker.com/r/sonatype/nexus3/). The modified version includes the following -
+
+1. Changes the initial password that is in `/nexus-data/admin.password` to `admin`
+2. Enables anonymous access - allows anonymous users to access `localhost:8081` with `READ` permissions
+3. Adds Docker Bearer Token Realm - allows anonymous pulls from local Nexus registry `localhost:8081`
+4. Creates two Docker repository of type `proxy`
+   1. `docker-hub` - DockerHub
+   2. `docker-ecrpublic` - AWS ECR Public
+5. Creates a Docker repository of type `group`
+   1. `docker-group` - The above Docker repositories are members of this Docker group
+
+Check the [provision](./provision) directory to learn more about how it works.
+
+```bash
+# 8081 - Nexus
+# 8082 - docker-group
+docker run -d \
+   -p 8081:8081 \
+   -p 8082:8082 \
+   --name nexus "unfor19/nexus-ops"
+```
+
+### Run Nexus Locally (UI)
+
+<details>
+
+<summary>Expand/Collapse</summary>
 
 For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The images are saved in the top layer of Nexus's container, so if the container is removed (not stopped) then the Docker images will also be removed.
 
@@ -80,6 +108,8 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    - Member repositories > Members > Add `docker-ecr`
 
 3. [Realms](http://localhost:8081/#admin/security/realms) > **Add Docker Bearer Token Realm** - [Enables Anonymous Pulls](https://help.sonatype.com/repomanager3/system-configuration/user-authentication#UserAuthentication-security-realms)
+
+</details>
 
 ### Test Locally
 
