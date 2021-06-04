@@ -3,6 +3,11 @@
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/) (Windows users should use [WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/))
+- Hardware
+  - [CPU](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-CPU): Minimum 4, Recommended 8+
+  - [Memory](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-GeneralMemoryGuidelines): Minimum 8GB, Recommended 16GB+
+
+---
 
 ## Usage
 
@@ -11,6 +16,8 @@ Nexus's Repository will serve as a "cache server", here's the logic -
 1. Each `docker pull` goes through Nexus's Repository `localhost:8081`.
 2. If the image exists, then pull it from there and re-tag it.
 3. If the image doesn't exist, pull it from DockerHub and save it in Nexus's Repository, so the next pull won't hit DockerHub.
+
+---
 
 ### Set Nexus's Repository As A Trusted Docker Repository
 
@@ -22,7 +29,11 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
   ],
 ```
 
+---
+
 ![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
+
+---
 
 ### Run Nexus Locally (CI)
 
@@ -40,13 +51,17 @@ We will run the a "modified" version of [sonatype/nexus3](https://hub.docker.com
 Check the [provision](./provision) directory to learn more about how it works.
 
 ```bash
+# ulimit - https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-Docker
 # 8081 - Nexus
 # 8082 - docker-group
 docker run -d \
+   --ulimit nofile=65536:65536 \
    -p 8081:8081 \
    -p 8082:8082 \
    --name nexus "unfor19/nexus-ops"
 ```
+
+---
 
 ### Run Nexus Locally (UI)
 
@@ -59,13 +74,14 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
 1. Run Nexus locally
     ```bash
     NEXUS_VERSION="3.30.1" && \
-
+   # ulimit - https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-Docker
     # 8081 - Nexus
     # 8082 - docker-group
     docker run -d \
-        -p 8081:8081 \
-        -p 8082:8082 \
-        --name nexus "sonatype/nexus3:${NEXUS_VERSION}"
+      --ulimit nofile=65536:65536 \
+      -p 8081:8081 \
+      -p 8082:8082 \
+      --name nexus "sonatype/nexus3:${NEXUS_VERSION}"
     ```
 2. Get the initial admin password - exec into the Docker container `nexus` and execute
    ```bash
@@ -78,6 +94,8 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    - Username: `admin`
    - Password: `from-previous-step`
    - Set the new password to `admin` and `Enable anonymous access`
+
+---
 
 ### Setup Docker Repository With Nexus
 
@@ -111,6 +129,8 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
 
 </details>
 
+---
+
 ### Test Locally
 
 1. Pull relevant Docker images via `localhost:8082`
@@ -134,6 +154,8 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
 
    # ^^ A random cat fact for each build
    ```
+
+---
 
 ### Workflow (CI/CD)
 
@@ -176,6 +198,7 @@ git commit -m "added some file"   && \
 git push
 ```
 
+---
 
 ### Pull From Different Repositories
 
@@ -191,6 +214,8 @@ So far the examples showed how to use DockerHub, though the process is the same 
   ```bash
   docker pull localhost:8082/nginx/nginx:1.19-alpine
   ```
+
+---
 
 ### Same Tag Precedence
 
@@ -221,9 +246,13 @@ After changing the order of Members -
    ```
 1. Check results at [http://localhost:8081/service/rest/repository/browse/**docker-ecr**/v2/bitnami/kubectl/tags/](http://localhost:8081/service/rest/repository/browse/docker-ecr/v2/bitnami/kubectl/tags/)
 
+---
+
 ## Known Caveats
 
 - It is required to pull all relevant images **before** the build step. Retagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps to avoid hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
+
+---
 
 ## Authors
 
