@@ -1,52 +1,38 @@
 # nexus-ops
 
+Provision a [Sonatype Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) headless Docker container.
+
+All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [Nexus REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api) calls are made with [curl](https://curl.se/). Check the [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) to learn more about the provisioning process.
+
 ## Requirements
 
-- [Docker](https://docs.docker.com/get-docker/) (Windows users should use [WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/))
 - Hardware
   - [CPU](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-CPU): Minimum 4, Recommended 8+
   - [Memory](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-GeneralMemoryGuidelines): Minimum 8GB, Recommended 16GB+
+- [Docker](https://docs.docker.com/get-docker/) (Windows users should use [WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/))
+- Set Nexus's Repository As A Trusted Docker Repository - Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then restart the Docker Daemon.
+   ```json
+   "insecure-registries": [
+      "localhost:8081"
+   ],
+   ```
+   ![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
 
----
 
-## Usage
+## Quick Start
 
-Nexus's Repository will serve as a "cache server", here's the logic -
+The provisioning script [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) performs the following tasks
 
-1. Each `docker pull` goes through Nexus's Repository `localhost:8081`.
-2. If the image exists, then pull it from there and re-tag it.
-3. If the image doesn't exist, pull it from DockerHub and save it in Nexus's Repository, so the next pull won't hit DockerHub.
-
----
-
-### Set Nexus's Repository As A Trusted Docker Repository
-
-Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then restart the Docker Daemon.
-
-```json
-  "insecure-registries": [
-    "localhost:8081"
-  ],
-```
-
-![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
-
----
-
-### Run Nexus Locally (CI)
-
-We will run the a "modified" version of [sonatype/nexus3](https://hub.docker.com/r/sonatype/nexus3/). The modified version includes the following -
-
-1. Changes the initial password that is in `/nexus-data/admin.password` to `admin`
-2. Enables anonymous access - allows anonymous users to access `localhost:8081` with `READ` permissions
-3. Adds Docker Bearer Token Realm - allows anonymous pulls from local Nexus registry `localhost:8081`
-4. Creates two Docker repository of type `proxy`
+1. Changes the [initial random password](https://help.sonatype.com/repomanager3/system-configuration/access-control/users) that is in `/nexus-data/admin.password` to `admin`
+2. Enables [anonymous access](https://help.sonatype.com/repomanager3/system-configuration/user-authentication/anonymous-access) - allows anonymous users to access `localhost:8081` with `READ` permissions
+3. Adds [Docker Bearer Token Realm](https://help.sonatype.com/repomanager3/formats/docker-registry/docker-authentication#DockerAuthentication-AuthenticatedAccesstoDockerRepositories) - allows anonymous pulls from local Nexus registry `localhost:8081`
+4. Creates two Docker repository of type [proxy](https://help.sonatype.com/repomanager3/formats/docker-registry/proxy-repository-for-docker)
    1. `docker-hub` - DockerHub
    2. `docker-ecrpublic` - AWS ECR Public
-5. Creates a Docker repository of type `group`
+5. Creates a Docker repository of type [group](https://help.sonatype.com/repomanager3/formats/docker-registry/grouping-docker-repositories)
    1. `docker-group` - The above Docker repositories are members of this Docker group
 
-Check the [provision](./provision) directory to learn more about how it works.
+### Docker Run
 
 ```bash
 # ulimit - https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-Docker
@@ -58,6 +44,16 @@ docker run -d \
    -p 8082:8082 \
    --name nexus "unfor19/nexus-ops"
 ```
+
+---
+
+## Usage
+
+Nexus's Repository will serve as a "cache server", here's the logic -
+
+1. Each `docker pull` goes through Nexus's Repository `localhost:8081`.
+2. If the image exists, then pull it from there and re-tag it.
+3. If the image doesn't exist, pull it from DockerHub and save it in Nexus's Repository, so the next pull won't hit DockerHub.
 
 ---
 
