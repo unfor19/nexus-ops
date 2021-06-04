@@ -29,8 +29,6 @@ Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then resta
   ],
 ```
 
----
-
 ![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
 
 ---
