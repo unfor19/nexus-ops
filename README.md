@@ -1,5 +1,7 @@
 # nexus-ops
 
+![nexus-ops-cover.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-cover.png)
+
 Provision [Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) (NXRM) headless Docker container.
 
 All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [Nexus REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api) calls are made with [curl](https://curl.se/). Check the [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) to learn more about the provisioning process.
@@ -249,6 +251,12 @@ After changing the order of Members -
 - It is required to pull all relevant images **before** the build step. Retagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps to avoid hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
 
 ---
+
+## References
+
+- Cover image - [Hackerboy Emoticon](http://123emoji.com/hacker-boy-sticker-5682/)
+- Cover image - [Nexus Logo](https://help.sonatype.com/docs/files/331022/34537964/3/1564671303641/NexusRepo_Icon.png)
+- Cover image - Docker Logo - https://draw.io
 
 ## Authors
 
