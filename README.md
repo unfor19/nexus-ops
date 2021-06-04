@@ -1,6 +1,6 @@
 # nexus-ops
 
-Provision a [Sonatype Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) headless Docker container.
+Provision a [Sonatype Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) (NXRM) headless Docker container.
 
 All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [Nexus REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api) calls are made with [curl](https://curl.se/). Check the [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) to learn more about the provisioning process.
 
@@ -59,11 +59,13 @@ Nexus's Repository will serve as a "cache server", here's the logic -
 
 ### Run Nexus Locally (UI)
 
+This is the exact same process that was done in the `Quick Start` section, only now we're going to do it manually in the UI. The purpose of this section is to help Nexus newbies (like me) to get familiar with the UI.
+
 <details>
 
 <summary>Expand/Collapse</summary>
 
-For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The images are saved in the top layer of Nexus's container, so if the container is removed (not stopped) then the Docker images will also be removed.
+For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The `nexus-data` is generated at the top layer of Nexus's container, so if the container is removed (not stopped) all the data in `nexus-data` is lost, including the Docker images.
 
 1. Run Nexus locally
     ```bash
