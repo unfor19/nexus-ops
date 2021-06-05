@@ -169,7 +169,7 @@ jobs:
 As implied from the label **self-hosted**, I intend to run this workflow on my local machine. Adding your local machine as a self-hosted runner is quite simple.
 
 1. GitHub Repository > Settings > Actions > Runners
-2. Add Runner > Operating System: **Linux** (for windows containers), Architecture: **X64**
+2. Add Runner > Operating System: **Linux** (or any OS), Architecture: **X64**
 3. Follow the steps in **Download**
 4. Follow the steps in **Configure** > Follow the prompts and add a custom label when prompted
    ```bash
