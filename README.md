@@ -136,7 +136,7 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    docker pull localhost:8082/unfor19/alpine-ci:latest && \
    docker pull localhost:8082/ubuntu:20.04
    ```
-2. Tag relevant images with `docker.io`, that will mitigate the need to rename images to `localhost:8082`
+2. Tag relevant images with `docker.io` or omit the prefix (like I did), that will mitigate the need to rename images to `localhost:8082`
    ```bash
    docker tag localhost:8082/unfor19/alpine-ci:latest unfor19/alpine-ci:latest && \
    docker tag localhost:8082/ubuntu:20.04 ubuntu:20.04
