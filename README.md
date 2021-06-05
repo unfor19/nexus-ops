@@ -6,6 +6,12 @@ Provision [Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) 
 
 All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [Nexus REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api) calls are made with [curl](https://curl.se/). Check the [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) to learn more about the provisioning process.
 
+## Goals
+
+- Hands-on experience with Nexus Repository Manager
+- Provision a ready-to-go Nexus Repository Manager container
+- Use Nexus Repository Manager as part of the CI/CD workflow
+
 ## Requirements
 
 - Hardware
@@ -19,7 +25,6 @@ All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [
    ],
    ```
    ![nexus-ops-insecure-registries.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-insecure-registries.png)
-
 
 ## Quick Start
 
@@ -53,9 +58,12 @@ docker run -d \
 
 Nexus's Repository will serve as a "cache server", here's the logic -
 
-1. Each `docker pull` goes through Nexus's Repository `localhost:8081`.
-2. If the image exists, then pull it from there and re-tag it.
-3. If the image doesn't exist, pull it from DockerHub and save it in Nexus's Repository, so the next pull won't hit DockerHub.
+1. Each `docker pull` goes through `localhost:8082/repository/docker-group` and gets the and then redirected to the relevant `docker-proxy`.
+   - DockerHub - `http://localhost:8081/repository/docker-hub/v2/`
+   - AWS ECR Public - `http://localhost:8081/repository/docker-ecrpublic/v2/`
+2. If the Docker image **exists**, Docker Client pulls it from NXRM
+   - It is recommended to re-tag the image from `localhost:8082/nginx` to `nginx`, so the references in your Dockerfile can remain `nginx`.
+3. If the Docker image **doesn't exist**, NXRM pulls it from DockerHub and save it in Nexus's Repository, following that, the Docker Client pulls the image from NXRM.
 
 ---
 
