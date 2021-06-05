@@ -12,7 +12,7 @@ All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [
   - [CPU](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-CPU): Minimum 4, Recommended 8+
   - [Memory](https://help.sonatype.com/repomanager3/installation/system-requirements#SystemRequirements-GeneralMemoryGuidelines): Minimum 8GB, Recommended 16GB+
 - [Docker](https://docs.docker.com/get-docker/) (Windows users should use [WSL2 backend](https://docs.docker.com/docker-for-windows/wsl/))
-- Set Nexus's Repository As A Trusted Docker Repository - Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then restart the Docker Daemon.
+- Set Nexus's Repository as a trusted Docker repository ([insecure registry](https://docs.docker.com/registry/insecure/)) - Either edit `$HOME/.docker/config.json` or the **Docker Engine**, and then restart the Docker Daemon.
    ```json
    "insecure-registries": [
       "localhost:8081"
