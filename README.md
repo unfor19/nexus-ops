@@ -10,7 +10,7 @@ All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [
 
 - Hands-on experience with Nexus Repository Manager
 - Provision a ready-to-go Nexus Repository Manager container
-- Use Nexus Repository Manager as part of the CI/CD workflow
+- Use Nexus Repository Manager as part of a CI/CD workflow
 
 ## Requirements
 
