@@ -208,7 +208,7 @@ git push
 
 ---
 
-### Pull From Different Repositories
+## Pull From Different Repositories
 
 So far the examples showed how to use DockerHub, though the process is the same for AWS ECR, or any other container registry.
 
@@ -225,7 +225,7 @@ So far the examples showed how to use DockerHub, though the process is the same 
 
 ---
 
-### Same Tag Precedence
+## Same Tag Precedence
 
 But what happens if both repositories hold images with the same tags? `owner/repository:tag`
 
