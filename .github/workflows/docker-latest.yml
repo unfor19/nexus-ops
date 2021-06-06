@@ -5,7 +5,7 @@ on:
     branches: [master]
     paths-ignore:
       - "README.md"
-      - ".github/workflows/release.yml"
+      - ".github/workflows/docker-release.yml"
 
 env:
   TARGET_BASE: base
