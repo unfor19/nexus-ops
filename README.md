@@ -54,7 +54,7 @@ docker run -d \
 
 ---
 
-## Usage
+## How It Works
 
 Nexus's Repository will serve as a "cache server", here's the logic -
 
@@ -67,7 +67,7 @@ Nexus's Repository will serve as a "cache server", here's the logic -
 
 ---
 
-### Run Nexus Locally (UI)
+## Run Nexus Locally (UI)
 
 This is the exact same process that was done in the `Quick Start` section, only now we're going to do it manually in the UI. The purpose of this section is to help Nexus newbies (like me) to get familiar with the UI.
 
@@ -151,6 +151,8 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    ```
 3. `docker build` - build the application, the Docker Daemon already pulled the required images to build the app.
    ```bash
+   git clone https://github.com/unfor19/nexus-ops.git
+   cd nexus-ops
    docker build -f Dockerfile.example -t unfor19/nexus-ops:example .
    ```
 4. `test image`
@@ -210,13 +212,13 @@ git push
 
 So far the examples showed how to use DockerHub, though the process is the same for AWS ECR, or any other container registry.
 
-- Pull from DockerHub
+- Pull from DockerHub - [nginx:1.19-alpine](https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=1.19-alpine)
 
    ```bash 
    docker pull localhost:8082/nginx:1.19-alpine
    ```
 
-- Pull from ECR
+- Pull from ECR - [nginx/nginx:1.19-alpine](https://gallery.ecr.aws/nginx/nginx)
   ```bash
   docker pull localhost:8082/nginx/nginx:1.19-alpine
   ```
