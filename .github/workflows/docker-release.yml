@@ -1,0 +1,40 @@
+name: Release to DockerHub
+
+on:
+  release:
+    types: [published, edited]
+
+env:
+  TARGET_APP: app
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  dockerhub-push:
+    name: docker push
+    runs-on: linux-self-hosted
+    strategy:
+      matrix:
+        include:
+          - DOCKERFILE_PATH: Dockerfile
+            NEXUS_VERSION: "0.30.1"
+            DOCKERHUB_TAG_PREFIX: "unfor19/nexus-ops:0.30.1"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+      - name: Set env vars
+        run: |
+          export RELEASE_VERSION=${GITHUB_REF_SLUG}
+          export DOCKERHUB_TAG="${{ matrix.DOCKERHUB_TAG_PREFIX }}-${RELEASE_VERSION}"
+          echo "DOCKERHUB_TAG=${DOCKERHUB_TAG}" >> $GITHUB_ENV
+          export NEXUS_VERSION="${{ matrix.NEXUS_VERSION }}"
+          echo "NEXUS_VERSION=${NEXUS_VERSION}" >> $GITHUB_ENV
+      - name: docker build image
+        run: |
+          docker build . -t "$DOCKERHUB_TAG" \
+            -f "${{ matrix.DOCKERFILE_PATH }}" \
+            --target "${TARGET_APP}" \
+            --build-arg NEXUS_VERSION="$NEXUS_VERSION"
+      - name: docker push to dockerhub
+        run: |
+          docker push "$DOCKERHUB_TAG"
