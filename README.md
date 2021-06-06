@@ -9,7 +9,7 @@ All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [
 ## Goals
 
 - Hands-on experience with Nexus Repository Manager
-- Provision a ready-to-go Nexus Repository Manager container
+- Provisioning a ready-to-go Nexus Repository Manager container
 - Use Nexus Repository Manager as part of a CI/CD workflow
 
 ## Requirements
@@ -63,7 +63,7 @@ Nexus's Repository will serve as a "cache server", here's the logic -
    - AWS ECR Public - `http://localhost:8081/repository/docker-ecrpublic/v2/`
 2. If the Docker image **exists**, Docker Client pulls it from NXRM
    - It is recommended to re-tag the image from `localhost:8082/nginx` to `nginx`, so the references in your Dockerfile can remain `nginx`.
-3. If the Docker image **doesn't exist**, NXRM pulls it from DockerHub and save it in Nexus's Repository, following that, the Docker Client pulls the image from NXRM.
+3. If the Docker image **doesn't exist**, NXRM pulls it from DockerHub and saves it in Nexus's Repository. Following that, the Docker Client pulls the image from NXRM.
 
 ---
 
@@ -75,7 +75,7 @@ This is the exact same process that was done in the `Quick Start` section, only 
 
 <summary>Expand/Collapse</summary>
 
-For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The `nexus-data` is generated at the top layer of Nexus's container, so if the container is removed (not stopped) all the data in `nexus-data` is lost, including the Docker images.
+For the sake of simplicity, I **won't be using** Docker volumes for [Persistent Data](https://github.com/sonatype/docker-nexus3#user-content-persistent-data). The `nexus-data` is generated at the top layer of Nexus's container, so if the container is removed (not stopped), all the data in `nexus-data` is lost, including the Docker images.
 
 1. Run Nexus locally
     ```bash
@@ -91,7 +91,7 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
     ```
 2. Get the initial admin password - exec into the Docker container `nexus` and execute
    ```bash
-   cat /nexus-data/admin.password; echo # the extra echo makes it easier to copy paste
+   cat /nexus-data/admin.password; echo # the extra echo makes it easier to copy-paste
    
    # Example:
    # e9d3c296-c89a-41b3-bc44-1484c59c9f05
@@ -149,7 +149,7 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    docker tag localhost:8082/unfor19/alpine-ci:latest unfor19/alpine-ci:latest && \
    docker tag localhost:8082/ubuntu:20.04 ubuntu:20.04
    ```
-3. `docker build` - build the application, the Docker Daemon already pulled the required images to build the app.
+3. `docker build` - build the application; the Docker Daemon already pulled the required images to build the app.
    ```bash
    git clone https://github.com/unfor19/nexus-ops.git
    cd nexus-ops
@@ -185,7 +185,7 @@ As implied from the label **self-hosted**, I intend to run this workflow on my l
    ```bash
    Enter any additional labels (ex. label-1,label-2): linux-self-hosted
    ```
-   A successful configuration should look like this
+   A successful configuration should look like this.
    ```
    ~/actions-runner $ ./config.sh --url https://github.com/unfor19/nexus-ops --token YOUR_TOKEN
    ...
@@ -198,7 +198,7 @@ As implied from the label **self-hosted**, I intend to run this workflow on my l
    2021-06-01 21:18:04Z: Listening for Jobs   
    ```
 
-Go on and initiate a workflow; add some file, commit and push
+Go on and initiate a workflow; add a file, commit and push.
 ```
 touch some-file                   && \
 git add some-file                 && \
@@ -210,7 +210,7 @@ git push
 
 ## Pull From Different Repositories
 
-So far the examples showed how to use DockerHub, though the process is the same for AWS ECR, or any other container registry.
+So far, the examples showed how to use DockerHub, though the process is the same for AWS ECR or any other container registry.
 
 - Pull from DockerHub - [nginx:1.19-alpine](https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=1.19-alpine)
 
@@ -244,11 +244,11 @@ After changing the order of Members -
 1. [Invalidate cache](http://localhost:8081/#admin/repository/repositories:docker-group)
 
    ![nexus-ops-invalidate-cache.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-invalidate-cache.png)
-2. Remove the existing image from local Docker Daemon cache
+2. Remove the existing image from the local Docker Daemon cache
    ```bash
    docker rmi localhost:8082/bitnami/kubectl
    ```
-1. Pull image again, this time it will be from ECR
+1. Pull the image again; this time, it will be from ECR
    ```bash
    docker pull localhost:8082/bitnami/kubectl
    ```
@@ -258,7 +258,7 @@ After changing the order of Members -
 
 ## Known Caveats
 
-- It is required to pull all relevant images **before** the build step. Retagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps to avoid hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
+- It is required to pull all relevant images **before** the build step. Re-tagging the images tricks the Docker Daemon to use existing images (`--pull missing`). This helps to avoid hitting DockerHub for each `pull`, though it means you need to prepare a list of images that should be pulled.
 
 ---
 
