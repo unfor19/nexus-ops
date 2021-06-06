@@ -295,6 +295,8 @@ The easiest way to get familiar with [Nexus's REST API](https://help.sonatype.co
 
 From there, you can execute commands with Swagger UI, and get the relevant `curl` commands. The following example demonstrates how I learned about the `repositories/docker/proxy` API.
 
+![nexus-ops-exploring-api.gif](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-exploring-api.gif)
+
 The provided `curl` commands do not include `-u admin:admin`, so make sure you add this argument when you use `curl`. Here's an example of a curl command
 
 ```bash
