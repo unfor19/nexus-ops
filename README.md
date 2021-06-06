@@ -291,9 +291,9 @@ After changing the order of Members -
 
 ### Exploring Nexus API
 
-The easiest way to get familiar with [Nexus's REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api), is to check page [http://localhost:8081/#admin/system/api](http://localhost:8081/#admin/system/api).
+The easiest way to get familiar with [Nexus's REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api), is to run Nexus locally and check the API page [http://localhost:8081/#admin/system/api](http://localhost:8081/#admin/system/api).
 
-From there, you can execute commands with Swagger UI, and get the relevant `curl` commands. The following example demonstrates how I learned about the `repositories/docker/proxy` API.
+From there, you can execute commands with [Swagger UI](https://swagger.io/tools/swagger-ui/), and get the relevant `curl` commands. The following example demonstrates how I learned about the `[GET] repositories/docker/proxy/{repositoryName}` API.
 
 ![nexus-ops-exploring-api.gif](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-exploring-api.gif)
 
