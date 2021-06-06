@@ -7,6 +7,7 @@ ctrl_c() {
 }
 
 
+# Helper Functions
 error_msg(){
   local msg="$1"
   echo -e "[ERROR] $(date) :: $msg"
@@ -17,6 +18,23 @@ error_msg(){
 log_msg(){
   local msg="$1"
   echo -e "[LOG] $(date) :: $msg"
+}
+
+
+wait_for_endpoints(){
+    declare endpoints=($@)
+    for endpoint in "${endpoints[@]}"; do
+        counter=1
+        while [[ $(curl -s -o /dev/null -w ''%{http_code}'' "$endpoint") != "200" ]]; do 
+            counter=$((counter+1))
+            log_msg "Waiting for - ${endpoint}"
+            if [[ $counter -gt 60 ]]; then
+                error_msg "Not healthy - ${endpoint}"
+            fi
+            sleep 3
+        done
+        log_msg "Healthy endpoint - ${endpoint}"
+    done    
 }
 
 
@@ -39,7 +57,7 @@ set_global_variables(){
 
 # Wait for Nexus to be healthy
 wait_for_healthy_response(){
-    "${_NEXUS_OPS_PATH}"/wait_for_endpoints.sh "${_NEXUS_URL}/status/writable"
+    wait_for_endpoints "${_NEXUS_URL}/status/writable"
     log_msg "Nexus API is ready to receive requests"
 }
 
@@ -60,6 +78,9 @@ set_credentials(){
 }
 
 
+### --------------------------------------------------
+### Functions ----------------------------------------
+### --------------------------------------------------
 repositories_get_docker_repository(){
     local repository_type="$1"
     local repository_name="$2"
@@ -128,6 +149,7 @@ repositories_create_repository_wrapper(){
         log_msg "Unknown error - $repo_exists"
     fi
 }
+### --------------------------------------------------
 
 
 main(){
