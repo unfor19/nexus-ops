@@ -101,8 +101,6 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
    - Password: `from-previous-step`
    - Set the new password to `admin` and `Enable anonymous access`
 
----
-
 ### Setup Docker Repository With Nexus
 
 1. Server Administration (Cogwheel) > [Repositories](http://localhost:8081/#admin/repository/repositories) > Create DockerHub repository
@@ -137,7 +135,7 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
 
 ---
 
-### Test Locally
+## Test Locally
 
 1. Pull relevant Docker images via `localhost:8082`
    ```bash
@@ -165,7 +163,7 @@ For the sake of simplicity, I **won't be using** Docker volumes for [Persistent 
 
 ---
 
-### Workflow (CI/CD)
+## Workflow (CI/CD)
 
 I've added the [GitHub Action](https://github.com/features/actions) - [docker-release.yml](https://github.com/unfor19/nexus-ops/blob/master/.github/workflows/docker-latest.yml). If you check it out, you'll see the following [code snippet](https://github.com/unfor19/nexus-ops/blob/master/.github/workflows/docker-latest.yml#L15-L18)
 
@@ -253,6 +251,57 @@ After changing the order of Members -
    docker pull localhost:8082/bitnami/kubectl
    ```
 1. Check results at [http://localhost:8081/service/rest/repository/browse/**docker-ecr**/v2/bitnami/kubectl/tags/](http://localhost:8081/service/rest/repository/browse/docker-ecr/v2/bitnami/kubectl/tags/)
+
+---
+
+## Development
+
+### Flow Of Work
+
+1. Build the image
+   ```bash
+   docker build -t unfor19/nexus-ops .
+   ```
+2. Run the image and mount the code
+   ```bash
+   docker run -d -it --name nexus -p 8081:8081 -p 8082:8082 -v "$PWD"/:/code/ unfor19/nexus-ops
+   ```
+3. Exec to container
+   ```bash
+   docker exec -it nexus --workdir="/code/provision" bash
+   ```
+4. Change the code of `entrypoint.sh` in local IDE (VSCode, PyCharm, etc.), and then execute the code in the container
+   ```bash
+   # Exploring current dir /code/provision
+   bash-4.4$ ls
+   entrypoint.sh  repositories  wait_for_endpoints.sh
+
+   # After changing the code
+
+   # Execute entrypoint.sh
+   bash-4.4$ ./entrypoint.sh 
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Healthy endpoint - http://localhost:8081/service/rest/v1/status/writable
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Nexus API is ready to receive requests
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Password was set
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Repository exists - proxy docker-hub
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Repository exists - proxy docker-ecrpublic
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Repository exists - group docker-group
+   [LOG] Sun Jun  6 22:58:46 UTC 2021 :: Finished executing - /nexus-data/nexus-ops/entrypoint.sh
+   ```
+
+### Exploring Nexus API
+
+The easiest way to get familiar with [Nexus's REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api), is to check page [http://localhost:8081/#admin/system/api](http://localhost:8081/#admin/system/api).
+
+From there, you can execute commands with Swagger UI, and get the relevant `curl` commands. The following example demonstrates how I learned about the `repositories/docker/proxy` API.
+
+The provided `curl` commands do not include `-u admin:admin`, so make sure you add this argument when you use `curl`. Here's an example of a curl command
+
+```bash
+curl -u admin:admin -X GET "http://localhost:8081/service/rest/v1/repositories/docker/proxy/docker-ecrpublic" -H "accept: application/json"
+```
+
+> **Tip**: It's best to invoke the `curl` commands within the running `nexus` container (`docker exec`), and not from your local machine. That is because `entrypoint.sh` is running as part of the container's startup, so it's best to test this file as if the container is running it, and not some other machine (like your local machine).
 
 ---
 
