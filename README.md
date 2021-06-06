@@ -2,7 +2,7 @@
 
 ![nexus-ops-cover.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-cover.png)
 
-Provision [Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) (NXRM) headless Docker container.
+Provision [Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) (NXRM) Docker container.
 
 All scripts are written in [Bash](https://www.gnu.org/software/bash/), and the [Nexus REST API](https://help.sonatype.com/repomanager3/rest-and-integration-api) calls are made with [curl](https://curl.se/). Check the [provision/entrypoint.sh](https://github.com/unfor19/nexus-ops/blob/master/provision/entrypoint.sh) to learn more about the provisioning process.
 
