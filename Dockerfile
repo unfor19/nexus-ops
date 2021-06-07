@@ -6,6 +6,12 @@ RUN curl -L -o /usr/local/bin/jq https://github.com/stedolan/jq/releases/downloa
     chmod +x /usr/local/bin/jq
 
 USER nexus
-WORKDIR /nexus-data/nexus-ops/
+ENV NEXUS_DATA_PATH="/nexus-data" \
+    NEXUS_ADMIN_USERNAME="admin" \
+    NEXUS_ADMIN_PASSWORD="admin" \
+    NEXUS_API_PATH="service/rest/v1" \
+    NEXUS_BASE_PATH="http://localhost:8081" \
+    NEXUS_OPS_VERBOSE="false"
+WORKDIR /"${NEXUS_DATA_PATH}/nexus-ops/"
 COPY provision/ .
 CMD /nexus-data/nexus-ops/entrypoint.sh
