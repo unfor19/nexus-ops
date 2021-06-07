@@ -1,5 +1,8 @@
 # nexus-ops
 
+[![Push latest version to DockerHub](https://github.com/unfor19/nexus-ops/actions/workflows/docker-latest.yml/badge.svg)](https://github.com/unfor19/nexus-ops/actions/workflows/docker-latest.yml) [![Dockerhub pulls](https://img.shields.io/docker/pulls/unfor19/nexus-ops)](https://hub.docker.com/r/unfor19/nexus-ops)
+
+
 ![nexus-ops-cover.png](https://d33vo9sj4p3nyc.cloudfront.net/nexus-ops/nexus-ops-cover.png)
 
 Provision [Nexus Repository Manager](https://hub.docker.com/r/sonatype/nexus3/) (NXRM) Docker container.
