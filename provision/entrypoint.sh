@@ -27,13 +27,13 @@ wait_for_endpoints(){
         counter=1
         while [[ $(curl -s -o /dev/null -w ''%{http_code}'' "$endpoint") != "200" ]]; do 
             counter=$((counter+1))
-            log_msg "Waiting for - ${endpoint}"
+            log_msg "WAIT FOR ENDPOINTS :: Waiting for - ${endpoint}"
             if [[ $counter -gt 60 ]]; then
-                error_msg "Not healthy - ${endpoint}"
+                error_msg "WAIT FOR ENDPOINTS :: Not healthy - ${endpoint}"
             fi
             sleep 3
         done
-        log_msg "Healthy endpoint - ${endpoint}"
+        log_msg "WAIT FOR ENDPOINTS :: Healthy endpoint - ${endpoint}"
     done    
 }
 
@@ -58,19 +58,19 @@ set_global_variables(){
 # Wait for Nexus to be healthy
 wait_for_healthy_response(){
     wait_for_endpoints "${_NEXUS_URL}/status/writable"
-    log_msg "Nexus API is ready to receive requests"
+    log_msg "WAIT FOR HEALTHY RESPONSE :: Nexus API is ready to receive requests"
 }
 
 
 # Credentials
 set_credentials(){
-    _ADMIN_USERNAME="admin"
+    _NEXUS_ADMIN_USERNAME="${NEXUS_ADMIN_USERNAME:-"admin"}"
     _INITIAL_PASSWORD=""
     if [[ -f "${_NEXUS_DATA_PATH}"/admin.password ]]; then
         _INITIAL_PASSWORD="$(head -n 1 "${_NEXUS_DATA_PATH}"/admin.password)"
     fi
-    _ADMIN_PASSWORD="${ADMIN_PASSWORD:-"admin"}"
-    _CREDENTIALS="${_ADMIN_USERNAME}:${_ADMIN_PASSWORD}"
+    _NEXUS_ADMIN_PASSWORD="${NEXUS_ADMIN_PASSWORD:-"admin"}"
+    _CREDENTIALS="${_NEXUS_ADMIN_USERNAME}:${_NEXUS_ADMIN_PASSWORD}"
 
     if [[ "$_NEXUS_OPS_VERBOSE" = "true" ]]; then
         _CURL_VERBOSE="-v"
@@ -97,28 +97,38 @@ repositories_get_docker_repository(){
 
 change_initial_password(){
     if [[ -n "${_INITIAL_PASSWORD}" ]]; then
-        log_msg "Initial password = ${_INITIAL_PASSWORD}"
-        curl $_CURL_VERBOSE -u "${_ADMIN_USERNAME}:${_INITIAL_PASSWORD}" -X PUT "${_NEXUS_URL}/security/users/admin/change-password" -H "Content-Type: text/plain" -d "$_ADMIN_PASSWORD"
+        log_msg "CHANGE INITIAL PASSWORD :: Changing ..."
+        if curl $_CURL_VERBOSE -u "${_NEXUS_ADMIN_USERNAME}:${_INITIAL_PASSWORD}" -X PUT "${_NEXUS_URL}/security/users/admin/change-password" -H "Content-Type: text/plain" -d "$_NEXUS_ADMIN_PASSWORD" ; then
+            log_msg "CHANGE INITIAL PASSWORD :: Successfully changed initial admin password"
+        else
+            error_msg "CHANGE INITIAL PASSWORD :: Failed to set initial password"
+        fi
     else
-        log_msg "Password was set"
+        log_msg "CHANGE INITIAL PASSWORD :: Admin password was set"
     fi
 }
 
 
 enable_anonymous_access(){
     if [[ "${_INITIAL_PASSWORD}" != "" ]]; then
-        log_msg "Enabling anonymous access to ${_NEXUS_URL}"
-        curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X PUT "${_NEXUS_URL}/security/anonymous"         -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"enabled\": true, \"userId\": \"anonymous\", \"realmName\": \"NexusAuthorizingRealm\"}"
-        log_msg "Successfully enabled anonymous access to ${_NEXUS_URL}"
+        log_msg "ENABLE ANONYMOUS ACCESS :: Enabling anonymous access to ${_NEXUS_URL} ..."
+        if curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X PUT "${_NEXUS_URL}/security/anonymous"         -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"enabled\": true, \"userId\": \"anonymous\", \"realmName\": \"NexusAuthorizingRealm\"}"; then
+            log_msg "ENABLE ANONYMOUS ACCESS :: Successfully enabled anonymous access to ${_NEXUS_URL}"
+        else
+            error_msg "ENABLE ANONYMOUS ACCESS :: Failed to enable anonymous access to ${_NEXUS_URL}"
+        fi
     fi
 }
 
 
 realms_enable_docker_token(){
     if [[ "${_INITIAL_PASSWORD}" != "" ]]; then
-        log_msg "Adding DockerToken to Realms"
-        curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X PUT "${_NEXUS_URL}/security/realms/active"     -H "accept: application/json" -H "Content-Type: application/json" -d "[ \"NexusAuthenticatingRealm\", \"NexusAuthorizingRealm\", \"DockerToken\"]"
-        log_msg "Successfully added DockerToken to Realms"
+        log_msg "REALMS ENABLE DOCKER TOKEN :: Adding DockerToken to Realms ..."
+        if curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X PUT "${_NEXUS_URL}/security/realms/active"     -H "accept: application/json" -H "Content-Type: application/json" -d "[ \"NexusAuthenticatingRealm\", \"NexusAuthorizingRealm\", \"DockerToken\"]"; then
+            log_msg "REALMS ENABLE DOCKER TOKEN :: Successfully added DockerToken to Realms"
+        else
+            error_msg "REALMS ENABLE DOCKER TOKEN :: Failed to added DockerToken to Realms"
+        fi
     fi
 }
 
@@ -127,7 +137,11 @@ repositories_create_repository(){
     local repository_type="$1"
     local repository_name="$2"
     local json_path="$3"
-    curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X POST "${_NEXUS_URL}/repositories/docker/${repository_type}" -H "accept: application/json" -H "Content-Type: application/json" -d "@${json_path}"
+    if curl $_CURL_VERBOSE -u "$_CREDENTIALS" -X POST "${_NEXUS_URL}/repositories/docker/${repository_type}" -H "accept: application/json" -H "Content-Type: application/json" -d "@${json_path}"; then
+        log_msg "REPOSITORIES CREATE REPOSITORY :: Successfully created the repository - ${repository_type}/${repository_name} - ${json_path}"
+    else
+        error_msg "REPOSITORIES CREATE REPOSITORY :: Failed to create the repository - ${repository_type}/${repository_name} - ${json_path}"
+    fi
 }
 
 
@@ -135,18 +149,20 @@ repositories_create_repository_wrapper(){
     local repository_type="$1"
     local repository_name="$2"
     local json_path="$3"
+    local repo_exists
     repo_exists=$(repositories_get_docker_repository "$repository_type" "$repository_name")
     if [[ "$repo_exists" = "true" ]]; then
-        log_msg "Repository exists - $repository_type $repository_name"
+        log_msg "REPOSITORIES CREATE REPOSITORY :: Repository exists - $repository_type/$repository_name"
     elif [[ "$repo_exists" = "404" ]]; then
-        log_msg "$repo_exists - $repository_type $repository_name, creating it ..."
+        log_msg "REPOSITORIES CREATE REPOSITORY :: Repository not found - $repository_type/$repository_name"
+        log_msg "REPOSITORIES CREATE REPOSITORY :: Creating the repository - $repository_type/$repository_name ..."
         repositories_create_repository "$repository_type" "$repository_name" "$json_path"
     elif [[ "$repo_exists" = "403" ]]; then
-        log_msg "Authorization error - 403"
+        error_msg "REPOSITORIES CREATE REPOSITORY :: Authorization error [403] - $repository_type/$repository_name"
     elif [[ "$repo_exists" = "401" ]]; then
-        log_msg "Authentication error - 401"
+        error_msg "REPOSITORIES CREATE REPOSITORY :: Authentication error [401] - $repository_type/$repository_name"
     else
-        log_msg "Unknown error - $repo_exists"
+        error_msg "REPOSITORIES CREATE REPOSITORY :: Unknown error [$repo_exists] - $repository_type/$repository_name"
     fi
 }
 ### --------------------------------------------------
