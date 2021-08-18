@@ -11,7 +11,7 @@ env:
 jobs:
   dockerhub-push:
     name: docker push
-    runs-on: linux-self-hosted
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         include:
